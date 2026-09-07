@@ -1,0 +1,741 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
+  <title>Gym Workout Tracker</title>  
+  <style>  
+    :root {  
+      color-scheme: dark;  
+      --bg-color: #0f172a;  
+      --card-bg: #1e293b;  
+      --accent: #0284c7;  
+      --accent-bright: #38bdf8;  
+      --accent-green: #10b981;  
+      --accent-orange: #f59e0b;  
+      --text-main: #f8fafc;  
+      --text-muted: #94a3b8;  
+      --border-color: #334155;  
+      --radius: 12px;  
+    }  
+  
+    * {  
+      box-sizing: border-box;  
+      margin: 0;  
+      padding: 0;  
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;  
+      -webkit-tap-highlight-color: transparent;  
+    }  
+  
+    body {  
+      background-color: var(--bg-color);  
+      color: var(--text-main);  
+      display: flex;  
+      flex-direction: column;  
+      align-items: center;  
+      min-height: 100vh;  
+      min-height: -webkit-fill-available;  
+      padding-bottom: 30px;  
+    }  
+  
+    html {  
+      height: -webkit-fill-available;  
+    }  
+  
+    .app-container {  
+      width: 100%;  
+      max-width: 480px;  
+      padding: 16px;  
+    }  
+  
+    header {  
+      display: flex;  
+      justify-content: space-between;  
+      align-items: center;  
+      padding: 12px 0;  
+      border-bottom: 1px solid var(--border-color);  
+      margin-bottom: 16px;  
+    }  
+  
+    h1 {  
+      font-size: 1.25rem;  
+      font-weight: 700;  
+      color: var(--accent-bright);  
+    }  
+  
+    button {  
+      -webkit-appearance: none;  
+      appearance: none;  
+    }  
+  
+    .btn-nav {  
+      background: var(--card-bg);  
+      border: 1px solid var(--border-color);  
+      color: var(--text-main);  
+      padding: 6px 12px;  
+      border-radius: 8px;  
+      font-size: 0.85rem;  
+      cursor: pointer;  
+    }  
+  
+    .card {  
+      background-color: var(--card-bg);  
+      border: 1px solid var(--border-color);  
+      border-radius: var(--radius);  
+      padding: 16px;  
+      margin-bottom: 16px;  
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);  
+    }  
+  
+    .card-title {  
+      font-size: 1.1rem;  
+      font-weight: 600;  
+      margin-bottom: 6px;  
+      color: var(--text-main);  
+    }  
+  
+    .card-subtitle {  
+      font-size: 0.85rem;  
+      color: var(--text-muted);  
+      margin-bottom: 12px;  
+    }  
+  
+    .btn-primary {  
+      width: 100%;  
+      background-color: var(--accent);  
+      color: white;  
+      border: none;  
+      padding: 14px;  
+      border-radius: var(--radius);  
+      font-size: 1rem;  
+      font-weight: 600;  
+      cursor: pointer;  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      gap: 8px;  
+      margin-top: 8px;  
+    }  
+  
+    .btn-primary:active {  
+      background-color: var(--accent-bright);  
+    }  
+  
+    .btn-secondary {  
+      width: 100%;  
+      background-color: transparent;  
+      color: var(--accent-orange);  
+      border: 1px solid var(--accent-orange);  
+      padding: 12px;  
+      border-radius: var(--radius);  
+      font-size: 0.95rem;  
+      font-weight: 600;  
+      cursor: pointer;  
+      margin-top: 8px;  
+    }  
+  
+    .btn-secondary:active {  
+      background-color: rgba(245, 158, 11, 0.1);  
+    }  
+  
+    .progress-bar-container {  
+      width: 100%;  
+      height: 8px;  
+      background-color: var(--border-color);  
+      border-radius: 4px;  
+      overflow: hidden;  
+      margin: 12px 0;  
+    }  
+  
+    .progress-bar-fill {  
+      height: 100%;  
+      background-color: var(--accent-green);  
+      width: 0%;  
+      transition: width 0.3s ease;  
+    }  
+  
+    .graphic-container {  
+      width: 100%;  
+      height: 160px;  
+      background-color: #090d16;  
+      border-radius: var(--radius);  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      margin-bottom: 16px;  
+      border: 1px solid var(--border-color);  
+      padding: 10px;  
+    }  
+  
+    .graphic-container svg {  
+      width: 100%;  
+      height: 100%;  
+      max-height: 140px;  
+    }  
+  
+    .info-box {  
+      background-color: rgba(2, 132, 199, 0.1);  
+      border-left: 4px solid var(--accent-bright);  
+      padding: 10px 12px;  
+      border-radius: 0 var(--radius) var(--radius) 0;  
+      font-size: 0.85rem;  
+      margin-bottom: 12px;  
+    }  
+  
+    .info-box strong {  
+      color: var(--accent-bright);  
+      display: block;  
+      margin-bottom: 2px;  
+    }  
+  
+    .history-box {  
+      background-color: rgba(16, 185, 129, 0.1);  
+      border-left: 4px solid var(--accent-green);  
+      padding: 10px 12px;  
+      border-radius: 0 var(--radius) var(--radius) 0;  
+      font-size: 0.85rem;  
+      margin-bottom: 16px;  
+    }  
+  
+    .history-box strong {  
+      color: var(--accent-green);  
+      display: block;  
+      margin-bottom: 2px;  
+    }  
+  
+    .sets-table {  
+      width: 100%;  
+      border-collapse: collapse;  
+      margin-bottom: 16px;  
+    }  
+  
+    .sets-table th {  
+      text-align: left;  
+      font-size: 0.8rem;  
+      color: var(--text-muted);  
+      padding-bottom: 8px;  
+      border-bottom: 1px solid var(--border-color);  
+    }  
+  
+    .sets-table td {  
+      padding: 8px 0;  
+      border-bottom: 1px solid rgba(51, 65, 85, 0.4);  
+    }  
+  
+    .input-num {  
+      -webkit-appearance: none;  
+      appearance: none;  
+      width: 80px;  
+      background-color: #090d16;  
+      border: 1px solid var(--border-color);  
+      color: var(--text-main);  
+      padding: 8px;  
+      border-radius: 6px;  
+      font-size: 16px; /* Must be 16px to stop iOS Safari zoom on focus */  
+      text-align: center;  
+    }  
+  
+    .input-num:focus {  
+      outline: 1px solid var(--accent-bright);  
+    }  
+  
+    .toast {  
+      background-color: var(--accent-orange);  
+      color: #000;  
+      padding: 10px;  
+      border-radius: 8px;  
+      font-size: 0.85rem;  
+      font-weight: 600;  
+      margin-bottom: 12px;  
+      text-align: center;  
+      display: none;  
+    }  
+  
+    .list-item {  
+      padding: 10px 0;  
+      border-bottom: 1px solid var(--border-color);  
+      font-size: 0.9rem;  
+    }  
+  
+    .list-item strong {  
+      color: var(--accent-bright);  
+    }  
+  
+    .badge {  
+      display: inline-block;  
+      padding: 4px 8px;  
+      background-color: var(--border-color);  
+      border-radius: 12px;  
+      font-size: 0.75rem;  
+      color: var(--text-muted);  
+    }  
+  </style>  
+</head>  
+<body>  
+  
+  <div class="app-container">  
+    <header>  
+      <h1 id="appHeaderTitle">GYM LOG</h1>  
+      <button class="btn-nav" id="homeBtn" onclick="showDashboard()" style="display:none;">Dashboard</button>  
+    </header>  
+  
+    <div id="toast" class="toast"></div>  
+  
+    <!-- DASHBOARD VIEW -->  
+    <div id="dashboardView">  
+      <div class="card">  
+        <div class="card-title">Client Profile</div>  
+        <div class="card-subtitle">Male, 40 yrs | 195cm | 98kg</div>  
+        <p style="font-size:0.85rem; color:var(--text-muted);">Select your workout for today. Track your progressive overload session by session.</p>  
+      </div>  
+  
+      <div class="card">  
+        <div class="card-title">Day 1: Upper Push / Upper Back</div>  
+        <div class="card-subtitle">Bench Press, Cable Row, Goblet Squat, Lateral Raise, Plank</div>  
+        <div id="history-day1" class="badge">Last Done: Never</div>  
+        <button class="btn-primary" onclick="startWorkout('day1')">Start Day 1</button>  
+      </div>  
+  
+      <div class="card">  
+        <div class="card-title">Day 2: Hinge / Upper Pull</div>  
+        <div class="card-subtitle">Lat Pulldown, RDL, Incline DB Press, Incline DB Curl, Deadbug</div>  
+        <div id="history-day2" class="badge">Last Done: Never</div>  
+        <button class="btn-primary" onclick="startWorkout('day2')">Start Day 2</button>  
+      </div>  
+  
+      <div class="card">  
+        <div class="card-title">Day 3: Arms / Shoulders / Leg Press</div>  
+        <div class="card-subtitle">Leg Press, DB Shoulder Press, Chest-Supported Row, Tricep Pushdown, Calf Raise</div>  
+        <div id="history-day3" class="badge">Last Done: Never</div>  
+        <button class="btn-primary" onclick="startWorkout('day3')">Start Day 3</button>  
+      </div>  
+    </div>  
+  
+    <!-- WARMUP VIEW -->  
+    <div id="warmupView" style="display: none;">  
+      <div class="card">  
+        <div class="card-title">Dynamic Warm-Up Routine</div>  
+        <div class="card-subtitle">8-10 Minutes to prevent injury and prime joints</div>  
+        <div class="list-item"><strong>1. Thermal Prep (3-5 min):</strong> Treadmill incline walk, bike, or rower until light sweat.</div>  
+        <div class="list-item"><strong>2. Arm Circles & Hugs (1 min):</strong> 10 forward/back circles, 10 horizontal hugs.</div>  
+        <div class="list-item"><strong>3. World's Greatest Stretch (1 min):</strong> Deep lunge, rotate arm up. 5 per side.</div>  
+        <div class="list-item"><strong>4. Glute Bridges (1 min):</strong> Lie on back, drive hips up. Hold 2s. 10 reps.</div>  
+        <p style="font-size:0.8rem; color:var(--accent-orange); margin-top:10px;">* Perform 1-2 light warm-up sets (50% weight) before working sets on the first main lift.</p>  
+        <button class="btn-primary" onclick="beginExercises()">Begin Exercises</button>  
+      </div>  
+    </div>  
+  
+    <!-- EXERCISE VIEW -->  
+    <div id="exerciseView" style="display: none;">  
+      <div style="display:flex; justify-content:space-between; align-items:center;">  
+        <span id="exerciseCounter" style="font-size:0.85rem; color:var(--text-muted);">Exercise 1 of 5</span>  
+        <span id="restTimerDisplay" style="font-size:0.85rem; color:var(--accent-bright); font-weight:600;">Rest: --</span>  
+      </div>  
+  
+      <div class="progress-bar-container">  
+        <div id="progressBar" class="progress-bar-fill"></div>  
+      </div>  
+  
+      <div class="card">  
+        <div id="exerciseName" class="card-title">Dumbbell Bench Press</div>  
+        <div id="exerciseTarget" class="card-subtitle">Target: Chest & Triceps | 3 Sets x 10 Reps</div>  
+  
+        <div class="graphic-container" id="graphicBox"></div>  
+  
+        <div id="historyBox" class="history-box" style="display:none;">  
+          <strong>Last Workout Performance:</strong>  
+          <span id="historyText">Set 1: 20kg x 10 | Set 2: 20kg x 10 | Set 3: 20kg x 10</span>  
+        </div>  
+  
+        <div class="info-box">  
+          <strong>Key Execution & Engagement Cue:</strong>  
+          <span id="exerciseCue">Keep elbows at 45 degrees. Squeeze armpits together at top.</span>  
+        </div>  
+  
+        <table class="sets-table">  
+          <thead>  
+            <tr>  
+              <th>SET</th>  
+              <th>WEIGHT (KG)</th>  
+              <th>REPS</th>  
+            </tr>  
+          </thead>  
+          <tbody id="setsTableBody"></tbody>  
+        </table>  
+  
+        <button class="btn-primary" onclick="saveAndNextExercise()">Complete Exercise & Next</button>  
+        <button class="btn-secondary" onclick="skipExercise()">Machine Occupied? Skip Exercise</button>  
+      </div>  
+    </div>  
+  
+    <!-- COOLDOWN / SUMMARY VIEW -->  
+    <div id="summaryView" style="display: none;">  
+      <div class="card">  
+        <div class="card-title" style="color:var(--accent-green);">Workout Complete!</div>  
+        <div class="card-subtitle">Great job staying consistent.</div>  
+  
+        <div style="margin: 16px 0;">  
+          <div class="card-title" style="font-size:1rem;">Cool-Down Stretch (5 Mins)</div>  
+          <div class="list-item"><strong>1. Doorway Chest Stretch:</strong> 45 sec per side.</div>  
+          <div class="list-item"><strong>2. Kneeling Hip Flexor Stretch:</strong> 45 sec per side.</div>  
+          <div class="list-item"><strong>3. Child's Pose:</strong> 1 minute deep belly breathing.</div>  
+        </div>  
+  
+        <button class="btn-primary" onclick="showDashboard()">Return to Dashboard</button>  
+      </div>  
+    </div>  
+  
+  </div>  
+  
+  <script>  
+    // --- SAFE LOCALSTORAGE FALLBACK FOR iOS SAFARI ---  
+    const memoryStore = {};  
+    function safeGetItem(key) {  
+      try {  
+        return localStorage.getItem(key);  
+      } catch (e) {  
+        return memoryStore[key] || null;  
+      }  
+    }  
+    function safeSetItem(key, value) {  
+      try {  
+        localStorage.setItem(key, value);  
+      } catch (e) {  
+        memoryStore[key] = value;  
+      }  
+    }  
+  
+    // --- DATABASE & WORKOUT DEFINITIONS ---  
+    const exercisesData = {  
+      db_bench: {  
+        title: "Dumbbell Bench Press",  
+        target: "Chest (Front shoulders & triceps secondary)",  
+        sets: 3, reps: "10 Reps", rest: "2 min",  
+        cue: "Pinch shoulder blades firmly into bench. Keep elbows tucked at 45 degrees. Squeeze armpits together at top.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <rect x="50" y="70" width="100" height="10" fill="#334155"/>  
+          <line x1="60" y1="80" x2="60" y2="100" stroke="#334155" stroke-width="4"/>  
+          <line x1="140" y1="80" x2="140" y2="100" stroke="#334155" stroke-width="4"/>  
+          <circle cx="60" cy="62" r="8" fill="#38bdf8"/>  
+          <line x1="68" y1="65" x2="130" y2="65" stroke="#38bdf8" stroke-width="6"/>  
+          <path d="M 85 65 L 85 35 M 115 65 L 115 35" stroke="#f8fafc" stroke-width="4"/>  
+          <circle cx="85" cy="35" r="6" fill="#f59e0b"/>  
+          <circle cx="115" cy="35" r="6" fill="#f59e0b"/>  
+        </svg>`  
+      },  
+      cable_row: {  
+        title: "Seated Cable Row",  
+        target: "Mid-back and Lats",  
+        sets: 3, reps: "12 Reps", rest: "90 sec",  
+        cue: "Pull handle to belly button. Lead by driving elbows back. Keep chest tall, no swinging.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <rect x="40" y="85" width="50" height="8" fill="#334155"/>  
+          <circle cx="60" cy="55" r="8" fill="#38bdf8"/>  
+          <line x1="60" y1="63" x2="65" y2="85" stroke="#38bdf8" stroke-width="6"/>  
+          <polyline points="65,70 95,70 120,70" stroke="#38bdf8" stroke-width="4" fill="none"/>  
+          <line x1="120" y1="40" x2="120" y2="90" stroke="#334155" stroke-width="4"/>  
+          <line x1="120" y1="70" x2="160" y2="70" stroke="#f59e0b" stroke-width="2"/>  
+          <rect x="155" y="50" width="10" height="40" fill="#f59e0b"/>  
+        </svg>`  
+      },  
+      goblet_squat: {  
+        title: "Dumbbell Goblet Squat",  
+        target: "Quads (Thighs) and Core",  
+        sets: 3, reps: "10 Reps", rest: "2 min",  
+        cue: "Hold DB vertically at chest. Sit straight down between hips. Keep heels glued to floor.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <circle cx="100" cy="30" r="8" fill="#38bdf8"/>  
+          <path d="M 100 38 L 100 70 L 80 100 M 100 70 L 120 100" stroke="#38bdf8" stroke-width="6" fill="none"/>  
+          <circle cx="100" cy="48" r="7" fill="#f59e0b"/>  
+        </svg>`  
+      },  
+      lat_raise: {  
+        title: "Dumbbell Lateral Raise",  
+        target: "Side Shoulders (Deltoids)",  
+        sets: 3, reps: "15 Reps", rest: "60 sec",  
+        cue: "Raise arms out to sides in wide arc. Slight bend in elbows. Imagine pouring out jugs of water.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <circle cx="100" cy="25" r="8" fill="#38bdf8"/>  
+          <line x1="100" y1="33" x2="100" y2="80" stroke="#38bdf8" stroke-width="6"/>  
+          <line x1="100" y1="80" x2="90" y2="110" stroke="#38bdf8" stroke-width="4"/>  
+          <line x1="100" y1="80" x2="110" y2="110" stroke="#38bdf8" stroke-width="4"/>  
+          <line x1="40" y1="45" x2="160" y2="45" stroke="#38bdf8" stroke-width="4"/>  
+          <circle cx="40" cy="45" r="5" fill="#f59e0b"/>  
+          <circle cx="160" cy="45" r="5" fill="#f59e0b"/>  
+        </svg>`  
+      },  
+      plank: {  
+        title: "Plank Hold",  
+        target: "Deep Core (Abdominals)",  
+        sets: 3, reps: "45 sec hold", rest: "60 sec",  
+        cue: "Straight line from head to heels. Squeeze glutes tightly and lock knees straight.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <circle cx="45" cy="55" r="8" fill="#38bdf8"/>  
+          <line x1="50" y1="60" x2="150" y2="60" stroke="#38bdf8" stroke-width="6"/>  
+          <line x1="30" y1="75" x2="170" y2="75" stroke="#334155" stroke-width="2"/>  
+        </svg>`  
+      },  
+      lat_pulldown: {  
+        title: "Lat Pulldown",  
+        target: "Outer Back (Lats - V-Taper)",  
+        sets: 3, reps: "12 Reps", rest: "90 sec",  
+        cue: "Pull bar down to upper chest. Drive elbows into back pockets. Do not pull behind neck.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <line x1="60" y1="20" x2="140" y2="20" stroke="#f59e0b" stroke-width="4"/>  
+          <circle cx="100" cy="50" r="8" fill="#38bdf8"/>  
+          <line x1="100" y1="58" x2="100" y2="85" stroke="#38bdf8" stroke-width="6"/>  
+        </svg>`  
+      },  
+      rdl: {  
+        title: "Romanian Deadlift (RDL)",  
+        target: "Hamstrings and Glutes",  
+        sets: 3, reps: "10 Reps", rest: "2 min",  
+        cue: "Soft bend in knees. Push hips straight back behind you as if closing a door with your butt.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <circle cx="80" cy="35" r="8" fill="#38bdf8"/>  
+          <path d="M 80 43 L 110 65 L 105 105" stroke="#38bdf8" stroke-width="6" fill="none"/>  
+          <circle cx="125" cy="75" r="6" fill="#f59e0b"/>  
+        </svg>`  
+      },  
+      incline_press: {  
+        title: "Incline Dumbbell Press",  
+        target: "Upper Chest",  
+        sets: 3, reps: "10 Reps", rest: "90 sec",  
+        cue: "Bench at 30-45 degrees. Pinch shoulder blades. Press dumbbells up and slightly inward.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <line x1="60" y1="90" x2="120" y2="50" stroke="#334155" stroke-width="6"/>  
+          <circle cx="85" cy="45" r="8" fill="#38bdf8"/>  
+          <circle cx="120" cy="30" r="5" fill="#f59e0b"/>  
+        </svg>`  
+      },  
+      incline_curl: {  
+        title: "Incline Dumbbell Curl",  
+        target: "Biceps (Long Head)",  
+        sets: 3, reps: "12 Reps", rest: "60 sec",  
+        cue: "Sit back on incline bench. Pin elbows pointing straight at floor. Curl without moving elbows forward.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <line x1="60" y1="90" x2="110" y2="50" stroke="#334155" stroke-width="6"/>  
+          <circle cx="85" cy="45" r="8" fill="#38bdf8"/>  
+          <circle cx="95" cy="60" r="5" fill="#f59e0b"/>  
+        </svg>`  
+      },  
+      deadbug: {  
+        title: "Deadbug Core Stability",  
+        target: "Abdominal Stability",  
+        sets: 3, reps: "10 per side", rest: "60 sec",  
+        cue: "Press lower back flat into floor (no gap). Extend opposite arm and leg slowly without arching.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <line x1="30" y1="80" x2="170" y2="80" stroke="#334155" stroke-width="2"/>  
+          <circle cx="50" cy="68" r="8" fill="#38bdf8"/>  
+        </svg>`  
+      },  
+      leg_press: {  
+        title: "Leg Press",  
+        target: "Quads and Glutes",  
+        sets: 3, reps: "12 Reps", rest: "2 min",  
+        cue: "Feet high and shoulder-width. Lower slowly until knees hit 90 deg. Do not lock knees at top.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <line x1="40" y1="80" x2="100" y2="90" stroke="#334155" stroke-width="8"/>  
+          <circle cx="50" cy="65" r="8" fill="#38bdf8"/>  
+        </svg>`  
+      },  
+      db_shoulder_press: {  
+        title: "Seated DB Shoulder Press",  
+        target: "Front and Side Shoulders",  
+        sets: 3, reps: "10 Reps", rest: "90 sec",  
+        cue: "Elbows at 60-degree angle forward. Press straight up overhead. Do not arch lower back.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <circle cx="100" cy="35" r="8" fill="#38bdf8"/>  
+        </svg>`  
+      },  
+      cs_row: {  
+        title: "Chest-Supported Row",  
+        target: "Mid-Back Thickness",  
+        sets: 3, reps: "12 Reps", rest: "90 sec",  
+        cue: "Lie face down on 30-deg incline bench. Drive elbows toward ceiling, squeezing shoulder blades.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <circle cx="115" cy="40" r="8" fill="#38bdf8"/>  
+        </svg>`  
+      },  
+      tricep_pushdown: {  
+        title: "Triceps Rope Pushdown",  
+        target: "Triceps (Back of Arm)",  
+        sets: 3, reps: "12 Reps", rest: "60 sec",  
+        cue: "Pin elbows stationary against ribs. Push rope down and spread handles apart at bottom.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <circle cx="90" cy="30" r="8" fill="#38bdf8"/>  
+        </svg>`  
+      },  
+      calf_raise: {  
+        title: "Standing Calf Raise",  
+        target: "Calves",  
+        sets: 3, reps: "15 Reps", rest: "60 sec",  
+        cue: "Lower heels past step edge for deep stretch. Hold 1s, then drive up high onto tiptoes.",  
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">  
+          <circle cx="100" cy="25" r="8" fill="#38bdf8"/>  
+        </svg>`  
+      }  
+    };  
+  
+    const workoutPlans = {  
+      day1: ["db_bench", "cable_row", "goblet_squat", "lat_raise", "plank"],  
+      day2: ["lat_pulldown", "rdl", "incline_press", "incline_curl", "deadbug"],  
+      day3: ["leg_press", "db_shoulder_press", "cs_row", "tricep_pushdown", "calf_raise"]  
+    };  
+  
+    // --- APP STATE ---  
+    let currentDayKey = null;  
+    let exerciseQueue = [];  
+    let currentExerciseIndex = 0;  
+    let totalExercisesInSession = 0;  
+  
+    function initApp() {  
+      updateDashboardHistory();  
+    }  
+  
+    function updateDashboardHistory() {  
+      ['day1', 'day2', 'day3'].forEach(day => {  
+        const lastDone = safeGetItem(`last_completed_${day}`);  
+        const el = document.getElementById(`history-${day}`);  
+        if (lastDone && el) {  
+          el.innerText = `Last Completed: ${lastDone}`;  
+          el.style.backgroundColor = "rgba(16, 185, 129, 0.2)";  
+          el.style.color = "var(--accent-green)";  
+        }  
+      });  
+    }  
+  
+    function showDashboard() {  
+      document.getElementById("dashboardView").style.display = "block";  
+      document.getElementById("warmupView").style.display = "none";  
+      document.getElementById("exerciseView").style.display = "none";  
+      document.getElementById("summaryView").style.display = "none";  
+      document.getElementById("homeBtn").style.display = "none";  
+      document.getElementById("appHeaderTitle").innerText = "GYM LOG";  
+      updateDashboardHistory();  
+    }  
+  
+    function startWorkout(dayKey) {  
+      currentDayKey = dayKey;  
+      exerciseQueue = [...workoutPlans[dayKey]];  
+      totalExercisesInSession = exerciseQueue.length;  
+      currentExerciseIndex = 0;  
+  
+      document.getElementById("dashboardView").style.display = "none";  
+      document.getElementById("warmupView").style.display = "block";  
+      document.getElementById("homeBtn").style.display = "block";  
+        
+      const dayNames = { day1: "Day 1", day2: "Day 2", day3: "Day 3" };  
+      document.getElementById("appHeaderTitle").innerText = dayNames[dayKey];  
+    }  
+  
+    function beginExercises() {  
+      document.getElementById("warmupView").style.display = "none";  
+      document.getElementById("exerciseView").style.display = "block";  
+      renderCurrentExercise();  
+    }  
+  
+    function renderCurrentExercise() {  
+      const exKey = exerciseQueue[currentExerciseIndex];  
+      const ex = exercisesData[exKey];  
+  
+      document.getElementById("exerciseCounter").innerText = `Exercise ${totalExercisesInSession - exerciseQueue.length + 1} of ${totalExercisesInSession}`;  
+      document.getElementById("exerciseName").innerText = ex.title;  
+      document.getElementById("exerciseTarget").innerText = `${ex.target} | ${ex.sets} Sets x ${ex.reps}`;  
+      document.getElementById("exerciseCue").innerText = ex.cue;  
+      document.getElementById("graphicBox").innerHTML = ex.svg;  
+      document.getElementById("restTimerDisplay").innerText = `Target Rest: ${ex.rest}`;  
+  
+      const progressPercent = ((totalExercisesInSession - exerciseQueue.length) / totalExercisesInSession) * 100;  
+      document.getElementById("progressBar").style.width = `${progressPercent}%`;  
+  
+      // Load History safely  
+      const rawHistory = safeGetItem(`history_${exKey}`);  
+      const historyData = rawHistory ? JSON.parse(rawHistory) : null;  
+      const historyBox = document.getElementById("historyBox");  
+        
+      if (historyData) {  
+        historyBox.style.display = "block";  
+        let historyStr = historyData.sets.map((s, i) => `Set ${i+1}: ${s.weight}kg x ${s.reps}`).join(" | ");  
+        document.getElementById("historyText").innerText = `${historyData.date} -> ${historyStr}`;  
+      } else {  
+        historyBox.style.display = "none";  
+      }  
+  
+      const tableBody = document.getElementById("setsTableBody");  
+      tableBody.innerHTML = "";  
+        
+      for (let i = 1; i <= ex.sets; i++) {  
+        let prevWeight = historyData && historyData.sets[i-1] ? historyData.sets[i-1].weight : "";  
+        let prevReps = historyData && historyData.sets[i-1] ? historyData.sets[i-1].reps : "";  
+  
+        const row = document.createElement("tr");  
+        row.innerHTML = `  
+          <td><strong>Set ${i}</strong></td>  
+          <td><input type="number" step="any" inputmode="decimal" class="input-num set-weight" data-set="${i}" placeholder="0" value="${prevWeight}"></td>  
+          <td><input type="number" step="1" inputmode="numeric" class="input-num set-reps" data-set="${i}" placeholder="0" value="${prevReps}"></td>  
+        `;  
+        tableBody.appendChild(row);  
+      }  
+    }  
+  
+    function skipExercise() {  
+      if (exerciseQueue.length <= 1) {  
+        showToast("This is the last exercise remaining!");  
+        return;  
+      }  
+  
+      const skippedEx = exerciseQueue.splice(currentExerciseIndex, 1)[0];  
+      exerciseQueue.push(skippedEx);  
+  
+      showToast(`Skipped ${exercisesData[skippedEx].title}. Moved to end of workout.`);  
+      renderCurrentExercise();  
+    }  
+  
+    function saveAndNextExercise() {  
+      const exKey = exerciseQueue[currentExerciseIndex];  
+      const weightInputs = document.querySelectorAll(".set-weight");  
+      const repsInputs = document.querySelectorAll(".set-reps");  
+  
+      let setsData = [];  
+      weightInputs.forEach((input, index) => {  
+        setsData.push({  
+          weight: input.value || 0,  
+          reps: repsInputs[index].value || 0  
+        });  
+      });  
+  
+      const today = new Date().toISOString().split('T')[0];  
+      const logEntry = { date: today, sets: setsData };  
+      safeSetItem(`history_${exKey}`, JSON.stringify(logEntry));  
+  
+      exerciseQueue.splice(currentExerciseIndex, 1);  
+  
+      if (exerciseQueue.length > 0) {  
+        renderCurrentExercise();  
+      } else {  
+        finishWorkout();  
+      }  
+    }  
+  
+    function finishWorkout() {  
+      const today = new Date().toISOString().split('T')[0];  
+      safeSetItem(`last_completed_${currentDayKey}`, today);  
+  
+      document.getElementById("exerciseView").style.display = "none";  
+      document.getElementById("summaryView").style.display = "block";  
+    }  
+  
+    function showToast(message) {  
+      const toast = document.getElementById("toast");  
+      toast.innerText = message;  
+      toast.style.display = "block";  
+      setTimeout(() => {  
+        toast.style.display = "none";  
+      }, 3000);  
+    }  
+  
+    document.addEventListener("DOMContentLoaded", initApp);  
+  </script>  
+</body>  
+</html>  
